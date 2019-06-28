@@ -5,8 +5,8 @@ module.exports = Database;
 
 if (!global.R5) {
   global.R5 = {
-    out: new (require('./Output.js'))('database')
-  };
+    out: console
+  }
 }
 
 let mysql = require('mysql');
@@ -68,7 +68,7 @@ Host.prototype = {
         host.retry(query, callback);
       }
       else if (typeof callback === 'function') {
-        if (err) { R5.out.err(`Query error: ${err}\n${query}\n`); }
+        if (err) { R5.out.error(`Query error: ${err}\n${query}\n`); }
         callback(err, results, fields);
       }
     });
@@ -92,11 +92,11 @@ function connect (host) {
   host.connection.connect(function (err) {
     if (err) {
       if (host.error_retries++ < 10) {
-        R5.out.err(`connecting (retrying [${host.error_retries}]): ${err.code}`);
+        R5.out.error(`connecting (retrying [${host.error_retries}]): ${err.code}`);
         host.retry();
         return;
       }
-      R5.out.err(`connecting: ${err.stack}`);
+      R5.out.error(`connecting: ${err.stack}`);
       throw err;
     }
     R5.out.log(`Connected to MySQL (conn: ${host.connection.threadId})`);
@@ -104,7 +104,7 @@ function connect (host) {
   });
 
   host.connection.on('error', function (err) {
-    R5.out.err((err.fatal === true ? '(FATAL) ' : '') + err);
+    R5.out.error((err.fatal === true ? '(FATAL) ' : '') + err);
     if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.fatal === true) {
       host.connection.destroy();
       connect(host);
