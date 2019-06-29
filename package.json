@@ -1,10 +1,10 @@
 {
   "name": "@funnode/mysql",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/FunNode/npm-mysql/issues"
   },
-  "homepage": "https://github.com/FunNode/npm-mysql#readme"
+  "homepage": "https://github.com/FunNode/npm-mysql#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "dotenv": "^8.0.0",
+    "mocha": "^6.1.4",
+    "mysql": "^2.17.1"
+  }
 }

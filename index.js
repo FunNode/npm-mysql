@@ -12,17 +12,17 @@ if (!global.R5) {
 let mysql = require('mysql');
 let config = {
   read: {
-    host: process.env.DB_IN_HOST,
-    user: process.env.DB_IN_USER,
-    password: process.env.DB_IN_PASS,
-    database: process.env.DB_IN_NAME,
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'funnode',
     debug: false
   },
   write: {
-    host: process.env.DB_OUT_HOST,
-    user: process.env.DB_OUT_USER,
-    password: process.env.DB_OUT_PASS,
-    database: process.env.DB_OUT_NAME,
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'funnode',
     debug: false
   }
 };
