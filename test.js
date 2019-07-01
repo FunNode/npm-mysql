@@ -22,7 +22,7 @@ const config = {
   }
 };
 describe('Database', function () {
-  let database = new (require('./index.js'))(config.read,config.write);
+  let database = new (require('./index.js'))(config.read, config.write);
 
   describe('Checking Database Connection', function () {
     it('should not return errors', function (done) {

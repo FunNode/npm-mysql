@@ -11,10 +11,9 @@ if (!global.R5) {
 
 let mysql = require('mysql');
 
-
 // Constructor
 
-function Database (read,write) {
+function Database (read, write) {
   const config = {};
   config.read = read;
   config.write = write;
@@ -106,5 +105,3 @@ function connect (host) {
 function is_update (str) {
   return str.substring(0, 6).toUpperCase() !== 'SELECT';
 }
-
-
