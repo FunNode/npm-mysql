@@ -10,26 +10,14 @@ if (!global.R5) {
 }
 
 let mysql = require('mysql');
-let config = {
-  read: {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'funnode',
-    debug: false
-  },
-  write: {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'funnode',
-    debug: false
-  }
-};
+
 
 // Constructor
 
-function Database () {
+function Database (read,write) {
+  const config = {};
+  config.read = read;
+  config.write = write;
   this.IN = new Host(config['read']);
 
   if (config['read']['host'] !== config['write']['host']) {

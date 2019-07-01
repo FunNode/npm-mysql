@@ -5,9 +5,24 @@ require('dotenv').config();
 
 var chai = require('chai');
 var assert = chai.assert;
-
+const config = {
+  read: {
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'funnode',
+    debug: false
+  },
+  write: {
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'funnode',
+    debug: false
+  }
+};
 describe('Database', function () {
-  let database = new (require('./index.js'))(true);
+  let database = new (require('./index.js'))(config.read,config.write);
 
   describe('Checking Database Connection', function () {
     it('should not return errors', function (done) {
