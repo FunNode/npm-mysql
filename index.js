@@ -13,14 +13,11 @@ let mysql = require('mysql');
 
 // Constructor
 
-function Database (read_config, write_config) {
-  const config = {};
-  config.read = read_config;
-  config.write = write_config;
-  this.IN = new Host(config['read']);
+function Database (read_config, write_config = false) {
+  this.IN = new Host(read_config);
 
-  if (config['read']['host'] !== config['write']['host']) {
-    this.OUT = new Host(config);
+  if (write_config && read_config['host'] !== write_config['host']) {
+    this.OUT = new Host(write_config);
   }
   else {
     this.OUT = this.IN;
