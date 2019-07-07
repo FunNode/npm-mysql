@@ -1,8 +1,6 @@
 /* eslint-disable brace-style, camelcase, semi */
 /* eslint-env mocha */
 
-require('dotenv').config();
-
 var chai = require('chai');
 var assert = chai.assert;
 const config = {
