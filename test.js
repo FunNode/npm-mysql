@@ -3,6 +3,7 @@
 
 var chai = require('chai');
 var assert = chai.assert;
+
 const config = {
   read: {
     host: 'localhost',
@@ -19,12 +20,13 @@ const config = {
     debug: false
   }
 };
-describe('Database', function () {
+
+describe('Database', () => {
   let database = new (require('./index.js'))(config.read, config.write);
 
-  describe('Checking Database Connection', function () {
-    it('should not return errors', function (done) {
-      database.query('select version()', function (err, results, fields) {
+  describe('Checking Database Connection', () => {
+    it('should not return errors', (done) => {
+      database.query('SELECT version()', (err, results, fields) => {
         assert.notEqual(typeof results, 'undefined', err);
         done();
       });
