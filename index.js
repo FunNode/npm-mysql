@@ -52,7 +52,7 @@ Host.prototype = {
         host.retry(query, callback);
       }
       else if (typeof callback === 'function') {
-        if (err) { R5.out.error(`Query error: ${err}\n${query}\n`); }
+        if (err) { R5.out.error(`MySQL query error: ${err}\n${query}\n`); }
         callback(err, results, fields);
       }
     });
@@ -76,14 +76,14 @@ function connect (host) {
   host.connection.connect(function (err) {
     if (err) {
       if (host.error_retries++ < 10) {
-        R5.out.error(`connecting (retrying [${host.error_retries}]): ${err.code}`);
+        R5.out.error(`MySQL connecting (retrying [${host.error_retries}]): ${err.code}`);
         host.retry();
         return;
       }
-      R5.out.error(`connecting: ${err.stack}`);
+      R5.out.error(`MySQL connecting: ${err.stack}`);
       throw err;
     }
-    R5.out.log(`Connected to MySQL (conn: ${host.connection.threadId})`);
+    R5.out.log(`MySQL connected (conn: ${host.connection.threadId})`);
     host.error_retries = 0;
   });
 
