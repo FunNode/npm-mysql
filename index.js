@@ -17,7 +17,8 @@ function Database (read_config, write_config = false) {
 
   if (write_config && read_config['host'] !== write_config['host']) {
     this.OUT = new Host(write_config);
-  } else {
+  }
+  else {
     this.OUT = this.IN;
   }
 }
@@ -64,7 +65,8 @@ Host.prototype = {
     const host = this;
     try {
       this.connection = await mysql.createConnection(host.config);
-    } catch (err) {
+    }
+    catch (err) {
       if (host.connect_retries++ < 10) {
         R5.out.error(`MySQL connecting (retrying [${host.connect_retries}]): ${err.code}`);
         return host.retry();
@@ -79,7 +81,8 @@ Host.prototype = {
       if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.fatal === true) {
         host.destroy();
         return host.connect();
-      } else {
+      }
+      else {
         throw err;
       }
     });  
@@ -98,7 +101,8 @@ Host.prototype = {
       const res = await host.connection.query(query);
       this.query_retries = 0;
       return res;
-    } catch (err) {
+    }
+    catch (err) {
       if (err.fatal && host.query_retries++ < 10) {
         return host.retry(query);
       }
