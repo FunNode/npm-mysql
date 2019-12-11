@@ -1,4 +1,3 @@
-/* eslint-disable brace-style, camelcase, semi */
 /* global R5 */
 
 module.exports = Database;
@@ -6,10 +5,10 @@ module.exports = Database;
 if (!global.R5) {
   global.R5 = {
     out: console
-  }
+  };
 }
 
-let mysql = require('mysql');
+const mysql = require('promise-mysql');
 
 // Constructor
 
@@ -25,80 +24,110 @@ function Database (read_config, write_config = false) {
 }
 
 function Host (config) {
-  this.error_retries = 0;
+  this.connect_retries = 0;
+  this.query_retries = 0;
   this.error_timeout = 10000;
   this.config = config;
-  connect(this);
+  this.config.reconnect = false;
 }
 
 // Public Methods
 
-Database.prototype.query = function (query, callback) {
-  let host = this.IN;
-  if (
-    (typeof query === 'string' && is_update(query)) ||
-    (typeof query === 'object' && is_update(query.sql))
-  ) {
-    host = this.OUT;
-  }
-  host.query(query, callback);
+Database.prototype = {
+  connect: async function () {
+    await this.IN.connect();
+    if (this.OUT !== this.IN) {
+      await this.OUT.connect();
+    }
+  },
+
+  disconnect: function () {
+    this.IN.destroy();
+    if (this.OUT !== this.IN) {
+      this.OUT.destroy();
+    }
+  },
+
+  query: async function (query) {
+    let host = this.IN;
+    if (
+      (typeof query === 'string' && is_update(query)) ||
+      (typeof query === 'object' && is_update(query.sql))
+    ) {
+      host = this.OUT;
+    }
+    return host.query(query);
+  },
 };
 
 Host.prototype = {
-  query: function (query, callback) {
-    let host = this;
-    host.connection.query(query, function (err, results, fields) {
-      if (err && err.fatal) {
-        host.retry(query, callback);
-      }
-      else if (typeof callback === 'function') {
-        if (err) { R5.out.error(`MySQL query error: ${err}\n${query}\n`); }
-        callback(err, results, fields);
-      }
-    });
-  },
-
-  retry: function (query, callback) {
-    let host = this;
-    setTimeout(function () {
-      host.connection.destroy();
-      connect(host);
-      if (query) { host.query(query, callback); }
-    }, host.error_timeout * (host.error_retries + 1));
-  }
-};
-
-// Private Methods
-
-function connect (host) {
-  host.connection = mysql.createConnection(host.config);
-
-  host.connection.connect(function (err) {
-    if (err) {
-      if (host.error_retries++ < 10) {
-        R5.out.error(`MySQL connecting (retrying [${host.error_retries}]): ${err.code}`);
-        host.retry();
-        return;
+  connect: async function () {
+    const host = this;
+    try {
+      this.connection = await mysql.createConnection(host.config);
+    }
+    catch (err) {
+      if (host.connect_retries++ < 10) {
+        R5.out.error(`MySQL connecting (retrying [${host.connect_retries}]): ${err.code}`);
+        return host.retry();
       }
       R5.out.error(`MySQL connecting: ${err.stack}`);
       throw err;
     }
-    R5.out.log(`MySQL connected (conn: ${host.connection.threadId})`);
-    host.error_retries = 0;
-  });
-
-  host.connection.on('error', function (err) {
-    R5.out.error((err.fatal === true ? '(FATAL) ' : '') + err);
-    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.fatal === true) {
+    R5.out.log(`MySQL connected (conn: ${host.connection.connection.threadId })`);
+    this.connect_retries = 0;
+    host.connection.on('error', async function (err) {
+      R5.out.error((err.fatal === true ? '(FATAL) ' : '') + err);
+      if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.fatal === true) {
+        host.destroy();
+        return host.connect();
+      }
+      else {
+        throw err;
+      }
+    });  
+  },
+  
+  destroy: function () {
+    const host = this;
+    if ((host.connection || {}).destroy) {
       host.connection.destroy();
-      connect(host);
     }
-    else {
+  },
+
+  query: async function (query) {
+    const host = this;
+    try {
+      const res = await host.connection.query(query);
+      this.query_retries = 0;
+      return res;
+    }
+    catch (err) {
+      if (err.fatal && host.query_retries++ < 10) {
+        return host.retry(query);
+      }
+      R5.out.error(`MySQL query error: ${err}\n${query}\n`);
       throw err;
     }
-  });
-}
+  },
+
+  retry: async function (query) {
+    const host = this;
+    host.destroy();
+    await delay(host.error_timeout * (host.connect_retries + host.query_retries + 1));
+    await host.connect();
+    if (query) {
+      return host.query(query);
+    }
+  },
+};
+
+// Private Methods
 
 function is_update (str) {
   return str.substring(0, 6).toUpperCase() !== 'SELECT';
+}
+
+function delay (ms) {
+  return new Promise((res) => setTimeout(res, ms));
 }
