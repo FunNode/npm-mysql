@@ -101,7 +101,10 @@ Host.prototype = {
     try {
       let rows, fields;
       if (query.values && query.values.length > 0) {
-        [rows, fields] = await host.connection.execute(query.sql, query.values);
+        [rows, fields] = await host.connection.execute(
+          query.sql,
+          query.values.map(item => item === undefined ? null : item)
+        );
       }
       else {
         rows = await host.connection.query(query.sql);
