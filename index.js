@@ -99,18 +99,19 @@ Host.prototype = {
   query: async function (query) {
     const host = this;
     try {
-      let rows, fields;
+      let results, fields;
       if (query.values && query.values.length > 0) {
-        [rows, fields] = await host.connection.execute(
+        [results, fields] = await host.connection.execute(
           query.sql,
           query.values.map(item => item === undefined ? null : item)
         );
+        results = results[0]
       }
       else {
-        rows = await host.connection.query(query.sql);
+        results = await host.connection.query(query.sql);
       }
       this.query_retries = 0;
-      return rows;
+      return results;
     }
     catch (err) {
       if (err.fatal && host.query_retries++ < 10) {
