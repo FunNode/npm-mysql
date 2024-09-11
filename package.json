@@ -1,6 +1,6 @@
 {
   "name": "@funnode/mysql",
-  "version": "2.2.1",
+  "version": "2.3.3",
   "description": "A mysql wrapper used by funnode repositories",
   "main": "index.js",
   "scripts": {
