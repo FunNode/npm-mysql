@@ -50,15 +50,15 @@ Database.prototype = {
   query: async function (query) {
     let host = this.IN;
 
-    if (typeof query === 'string') {
-      query = { sql: query };
-    }
-    if (is_update(query.sql)) {
+    if (
+      (typeof query === 'object' && is_update(query.sql)) ||
+      (typeof query === 'string' && is_update(query))
+    ) {
       host = this.OUT;
     }
 
     return host.query(query);
-  },
+  }
 };
 
 Host.prototype = {
@@ -100,12 +100,12 @@ Host.prototype = {
     const host = this;
     try {
       let result, fields;
-      if (query.values && query.values.length > 0) {
+      if (typeof query === 'object' && query.values && query.values.length > 0) {
         query.values = query.values.map(item => item === undefined ? null : item);
         [result, fields] = await host.connection.execute(query);
       }
       else {
-        result = await host.connection.query(query.sql);
+        result = await host.connection.query(query);
       }
       this.query_retries = 0;
       return result;
