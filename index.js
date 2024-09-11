@@ -105,7 +105,7 @@ Host.prototype = {
         [result, fields] = await host.connection.execute(query);
       }
       else {
-        result = await host.connection.query(query);
+        [result, fields] = await host.connection.query(query);
       }
       this.query_retries = 0;
       return result;
