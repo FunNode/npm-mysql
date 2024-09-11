@@ -97,7 +97,13 @@ Host.prototype = {
   query: async function (query) {
     const host = this;
     try {
-      const res = await host.connection.query(query);
+      let res;
+      if (typeof query === 'object') {
+        res = await host.connection.query(query.sql, query.values);
+      }
+      else {
+        res = await host.connection.query(query);
+      }
       this.query_retries = 0;
       return res;
     }

@@ -199,7 +199,7 @@ describe('Database', function () {
       const queryObj = { sql: 'INSERT' };
       await database.query(queryObj);
       expect(queryOut).to.have.been.calledOnce;
-      expect(queryOut.args[0][0]).to.eql(queryObj);
+      expect(queryOut.args[0][0]).to.eql('INSERT');
       expect(queryIn).to.not.have.been.called;
     });
   });
