@@ -49,12 +49,14 @@ Database.prototype = {
 
   query: async function (query) {
     let host = this.IN;
-    if (
-      (typeof query === 'string' && is_update(query)) ||
-      (typeof query === 'object' && is_update(query.sql))
-    ) {
+
+    if (typeof query === 'string') {
+      query = { sql: query };
+    }
+    if (is_update(query.sql)) {
       host = this.OUT;
     }
+
     return host.query(query);
   },
 };
@@ -98,11 +100,11 @@ Host.prototype = {
     const host = this;
     try {
       let rows, fields;
-      if (typeof query === 'object') {
+      if (query.values && query.values.length > 0) {
         [rows, fields] = await host.connection.execute(query.sql, query.values);
       }
       else {
-        rows = await host.connection.query(query);
+        rows = await host.connection.query(query.sql);
       }
       this.query_retries = 0;
       return rows;
