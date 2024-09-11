@@ -101,6 +101,7 @@ Host.prototype = {
     try {
       let result, fields;
       if (query.values && query.values.length > 0) {
+        query.values = query.values.map(item => item === undefined ? null : item);
         [result, fields] = await host.connection.execute(query);
       }
       else {
