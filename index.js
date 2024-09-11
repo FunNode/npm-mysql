@@ -8,7 +8,7 @@ if (!global.R5) {
   };
 }
 
-const mysql = require('promise-mysql');
+const mysql = require('mysql2/promise');
 
 // Constructor
 
@@ -97,9 +97,15 @@ Host.prototype = {
   query: async function (query) {
     const host = this;
     try {
-      const res = await host.connection.query(query);
+      let rows, fields;
+      if (typeof query === 'object') {
+        [rows, fields] = await host.connection.execute(query.sql, query.values);
+      }
+      else {
+        rows = await host.connection.query(query);
+      }
       this.query_retries = 0;
-      return res;
+      return rows;
     }
     catch (err) {
       if (err.fatal && host.query_retries++ < 10) {
