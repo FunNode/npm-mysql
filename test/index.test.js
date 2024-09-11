@@ -17,7 +17,7 @@ describe('Database', function () {
 
   function inject () {
     Database = proxyquire('../index', {
-      'promise-mysql': mysqlLib,
+      'mysql2/promise': mysqlLib,
     });
   }
 
@@ -60,7 +60,7 @@ describe('Database', function () {
     it('connects', async function () {
       await database.connect();
       expect(createConnection).to.have.been.calledOnce;
-      expect(createConnection.args[0][0]).to.eql({ host: 'both', reconnect: false });
+      expect(createConnection.args[0][0]).to.eql({ host: 'both' });
       expect(on).to.have.been.calledOnce;
     });
 
@@ -165,8 +165,8 @@ describe('Database', function () {
     it('connects', async function () {
       await database.connect();
       expect(createConnection).to.have.been.calledTwice;
-      expect(createConnection.args[0][0]).to.eql({ host: 'in', reconnect: false });
-      expect(createConnection.args[1][0]).to.eql({ host: 'out', reconnect: false });
+      expect(createConnection.args[0][0]).to.eql({ host: 'in' });
+      expect(createConnection.args[1][0]).to.eql({ host: 'out' });
     });
 
     it('disconnects', async function () {

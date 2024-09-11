@@ -1,6 +1,6 @@
 {
   "name": "@funnode/mysql",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A mysql wrapper used by funnode repositories",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
   ],
   "license": "ISC",
   "dependencies": {
-    "promise-mysql": "^5.0.4"
+    "mysql2": "^3.11.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",

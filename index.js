@@ -8,7 +8,7 @@ if (!global.R5) {
   };
 }
 
-const mysql = require('promise-mysql');
+const mysql = require('mysql2/promise');
 
 // Constructor
 
@@ -28,7 +28,6 @@ function Host (config) {
   this.query_retries = 0;
   this.error_timeout = 10000;
   this.config = config;
-  this.config.reconnect = false;
 }
 
 // Public Methods
