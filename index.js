@@ -86,9 +86,9 @@ Host.prototype = {
       else {
         throw err;
       }
-    });  
+    });
   },
-  
+
   destroy: function () {
     const host = this;
     if ((host.connection || {}).destroy) {
