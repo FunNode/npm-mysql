@@ -27,11 +27,12 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm run test
-      - uses: paambaati/codeclimate-action@v2.3.0
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.cc_reporter_id}}
-        with:
-          coverageCommand: npm run coverage
+      # CodeClimate integration - disabled (Code Climate API was discontinued as of July 18, 2025)
+      # - uses: paambaati/codeclimate-action@v2.3.0
+      #   env:
+      #     CC_TEST_REPORTER_ID: ${{secrets.cc_reporter_id}}
+      #   with:
+      #     coverageCommand: npm run coverage
   publish-gpr:
     needs: build
     if: github.event_name == 'push'
