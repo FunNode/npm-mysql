@@ -83,9 +83,9 @@ Host.prototype = {
         host.destroy();
         return host.connect();
       }
-      else {
-        throw err;
-      }
+      // Non-fatal errors are already logged above - throwing here has no caller to catch
+      // it (this is an async event-listener callback), so it only became an unhandled
+      // promise rejection that could crash the process.
     });
   },
 

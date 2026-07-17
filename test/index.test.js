@@ -82,12 +82,10 @@ describe('Database', function () {
       expect(destroy).to.have.been.calledOnce;
     });
 
-    it('does not reconnect on unknown errors', async function () {
+    it('logs but does not reconnect or throw on unknown errors', async function () {
       await database.connect();
       const errorCallback = on.args[0][1];
-      await errorCallback({ error: 'error' })
-        .then(() => expect.fail())
-        .catch((err) => expect(err).to.eql({ error: 'error' }));
+      await expect(errorCallback({ error: 'error' })).to.be.fulfilled;
       expect(createConnection).to.have.been.calledOnce;
       expect(on).to.have.been.calledOnce;
       expect(destroy).to.not.have.been.called;
