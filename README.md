@@ -1,7 +1,6 @@
 # npm-mysql
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/eefd73fd65033e9d35ee/maintainability)](https://codeclimate.com/github/FunNode/npm-mysql/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/eefd73fd65033e9d35ee/test_coverage)](https://codeclimate.com/github/FunNode/npm-mysql/test_coverage)
+![npm package](https://github.com/FunNode/npm-mysql/workflows/npm%20package/badge.svg)
 [![codecov](https://codecov.io/gh/FunNode/npm-mysql/graph/badge.svg)](https://codecov.io/gh/FunNode/npm-mysql)
 
 Use the following steps to update and publish the package (https://www.npmjs.com/package/@funnode/mysql)
